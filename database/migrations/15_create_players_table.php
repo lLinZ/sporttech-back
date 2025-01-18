@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('surnames');
             $table->string('document');
             $table->string('email');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->unsignedBigInteger('discipline_id')->nullable();
             $table->foreign('discipline_id')->references('id')->on('disciplines')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('category_id')->nullable();
@@ -37,6 +37,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('players');
+        Schema::enableForeignKeyConstraints();
     }
 };

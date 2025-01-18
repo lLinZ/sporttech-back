@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -14,6 +15,14 @@ class CategoryController extends Controller
     public function index()
     {
         //
+        $categories = Category::paginate();
+        return response()->json(['status' => true, 'data' => $categories], 200);
+    }
+    public function all()
+    {
+        //
+        $categories = Category::get();
+        return response()->json(['status' => true, 'data' => $categories], 200);
     }
 
     /**
@@ -30,6 +39,21 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         //
+        $validator = Validator::make($request->all(), [
+            'description' => 'required|string|max:255|unique:categories',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 400);
+        }
+        try {
+            $category = Category::create([
+                'description' => $request->description,
+            ]);
+            return response()->json(['status' => true, 'message' => 'Se ha registrado la categoria'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['status' => false, 'message' => 'No se ha logrado registrar la categoria', 'err' => [$th->getMessage()]], 500);
+        }
     }
 
     /**

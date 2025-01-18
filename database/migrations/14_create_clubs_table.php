@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('clubs', function (Blueprint $table) {
             $table->id();
             $table->string('description');
+            $table->string('photo')->nullable();
             $table->unsignedBigInteger('league_id')->nullable();
             $table->foreign('league_id')->references('id')->on('leagues')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
@@ -25,6 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('clubs');
+        Schema::enableForeignKeyConstraints();
     }
 };
