@@ -17,8 +17,31 @@ class PlayerController extends Controller
     public function index()
     {
         //
-        $players = Player::paginate();
+        $players = Player::select('id', 'names', 'surnames', 'photo', 'document', 'team_id')->with([
+            'team' => function ($query) {
+                $query->select('id', 'description', 'photo');
+            }
+        ])->paginate();
         return response()->json(['status' => true, 'data' => $players], 200);
+    }
+    public function get_player_by_id(Request $request, Player $player)
+    {
+        //
+        $player_data = Player::select('id', 'names', 'surnames', 'photo', 'document', 'email',  'team_id', 'category_id', 'discipline_id', 'league_id')->with([
+            'team' => function ($query) {
+                $query->select('id', 'description', 'photo');
+            },
+            'league' => function ($query) {
+                $query->select('id', 'description');
+            },
+            'discipline' => function ($query) {
+                $query->select('id', 'description');
+            },
+            'category' => function ($query) {
+                $query->select('id', 'description');
+            }
+        ])->find($player->id);
+        return response()->json(['status' => true, 'data' => $player_data], 200);
     }
 
     /**
@@ -73,7 +96,7 @@ class PlayerController extends Controller
                 'email' => $request->email,
                 'document' => $request->document,
             ]);
-            $player->discipline_id()->associate($request->discipline_id);
+            $player->discipline()->associate($request->discipline_id);
             $player->league()->associate($request->league_id);
             $player->team()->associate($request->team_id);
             $player->category()->associate($request->category_id);

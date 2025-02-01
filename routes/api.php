@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\QuotationController;
+use App\Http\Controllers\StadiumController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,12 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
     /**---------------------
-     * PLAYERS
+     * CONTACTS
      * ---------------------**/
     // Paginacion de jugadores
-    Route::get('players', [PlayerController::class, 'index']);
+    Route::get('contacts', [PlayerController::class, 'index']);
+    // Paginacion de jugadores
+    Route::get('contact/{player}', [PlayerController::class, 'get_player_by_id']);
     // Registrar jugador
-    Route::post('players/add', [PlayerController::class, 'store']);
+    Route::post('contacts/add', [PlayerController::class, 'store']);
 
     /**---------------------
      * TEAMS
@@ -91,4 +98,55 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clubs', [ClubController::class, 'index']);
     // Registrar club
     Route::post('clubs/add', [ClubController::class, 'store']);
+
+    /**---------------------
+     * STADIUMS
+     * ---------------------**/
+    // Todos los stadiums
+    Route::get('stadiums/all', [StadiumController::class, 'all']);
+    // Paginacion de stadiums
+    Route::get('stadiums', [StadiumController::class, 'index']);
+    // Registrar stadiums
+    Route::post('stadiums/add', [StadiumController::class, 'store']);
+    // Registrar localizacion
+    Route::post('stadiums/{stadium}/location/add', [LocationController::class, 'store']);
+    // Localizaciones por id de Stadium
+    Route::get('stadiums/{stadium}/locations', [LocationController::class, 'get_locations_by_stadium']);
+    // Todas las localizaciones de stadiums
+    Route::get('stadiums/locations/all', [LocationController::class, 'all']);
+
+    /**---------------------
+     * QUOTATIONS
+     * ---------------------**/
+    //  Todas las cotizaciones
+    Route::get('quotations/all', [QuotationController::class, 'all']);
+    // Paginacion de cotizaciones
+    Route::get('quotations', [QuotationController::class, 'index']);
+    // Paginacion de cotizaciones por cliente
+    Route::get('quotations/client', [QuotationController::class, 'index_by_client']);
+    // Paginacion de cotizaciones por cliente
+    Route::get('quotations/latest', [QuotationController::class, 'latest']);
+    // Registrar cotizacion
+    Route::post('quotations/add', [QuotationController::class, 'store']);
+    Route::get('quotations/{quotation}', [QuotationController::class, 'get_quotation_by_id']);
+
+    /**---------------------
+     * BRANDS
+     * ---------------------**/
+    //  Todas las cotizaciones
+    Route::get('brands/all', [BrandController::class, 'all']);
+    // Paginacion de cotizaciones
+    Route::get('brands', [BrandController::class, 'index']);
+    // Registrar cotizacion
+    Route::post('brands/add', [BrandController::class, 'store']);
+
+    /**---------------------
+     * CLIENTS
+     * ---------------------**/
+    //  Todas las cotizaciones
+    Route::get('clients/all', [ClientController::class, 'all']);
+    // Paginacion de cotizaciones
+    Route::get('clients', [ClientController::class, 'index']);
+    // Registrar cotizacion
+    Route::post('clients/add', [ClientController::class, 'store']);
 });

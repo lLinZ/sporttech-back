@@ -29,6 +29,12 @@ class Team extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function player()
+    {
+        return $this->hasMany(Player::class);
+    }
+
+
     protected $fillable = [
         'description',
     ];

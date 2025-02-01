@@ -35,7 +35,7 @@ class AuthController extends Controller
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
         }
-        $user = User::where('email', $request['email'])->firstOrFail();
+        $user = User::with('role')->where('email', $request['email'])->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
         $user->token = $token;
         $logs = Log::create([
@@ -141,20 +141,20 @@ class AuthController extends Controller
             'color' => '#0073ff',
         ]);
         // Obtener status activo o crear status si no existe
-        // $status = Status::firstOrNew(['description' => 'Activo']);
-        // $status->save();
+        $status = Status::firstOrNew(['description' => 'Activo']);
+        $status->save();
 
         // Se asocia el status al usuario
-        // $user->status()->associate($status);
+        $user->status()->associate($status);
 
         // Obtener rol cliente o crear rol si no existe
-        // $role = Role::firstOrNew(['description' => 'Master']);
-        // $role->save();
+        $role = Role::firstOrNew(['description' => 'Master']);
+        $role->save();
 
         // Se asocia el rol al usuario
-        // $user->role()->associate($role);
+        $user->role()->associate($role);
         // Se guarda el usuario
-        // $user->save();
+        $user->save();
 
         // Token de auth
         $token = $user->createToken("auth_token")->plainTextToken;
@@ -185,7 +185,7 @@ class AuthController extends Controller
     public function get_logged_user_data(Request $request)
     {
         $data = $request->user();
-        $user = User::where('id', $data->id)->first();
+        $user = User::with('role')->where('id', $data->id)->first();
         return response()->json(['user' => $user]);
     }
 
